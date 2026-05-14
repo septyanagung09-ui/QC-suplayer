@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>QC Supplier Bundle PCS</title>
+
+  <style>
+
+    body{
+      font-family: Arial, sans-serif;
+      background:#f4f4f4;
+      padding:30px;
+    }
+
+    .container{
+      max-width:1200px;
+      margin:auto;
+      background:white;
+      padding:25px;
+      border-radius:10px;
+      box-shadow:0 0 10px rgba(0,0,0,0.1);
+    }
+
+    h2{
+      text-align:center;
+      margin-bottom:20px;
+    }
+
+    .form-group{
+      margin-bottom:15px;
+    }
+
+    label{
+      font-weight:bold;
+      display:block;
+      margin-bottom:5px;
+    }
+
+    input{
+      width:100%;
+      padding:10px;
+      border:1px solid #ccc;
+      border-radius:5px;
+    }
+
+    button{
+      padding:12px 20px;
+      border:none;
+      border-radius:5px;
+      cursor:pointer;
+      color:white;
+      font-size:14px;
+      margin-top:10px;
+      margin-right:10px;
+    }
+
+    .btn-tambah{
+      background:#007bff;
+    }
+
+    .btn-export{
+      background:#28a745;
+    }
+
+    table{
+      width:100%;
+      border-collapse:collapse;
+      margin-top:25px;
+    }
+
+    table, th, td{
+      border:1px solid #ccc;
+    }
+
+    th{
+      background:#007bff;
+      color:white;
+    }
+
+    th, td{
+      padding:10px;
+      text-align:center;
+    }
+
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <h2>DATA QC SUPPLIER</h2>
+
+  <div class="form-group">
+    <label>Tanggal</label>
+    <input type="date" id="tanggal">
+  </div>
+
+  <div class="form-group">
+    <label>Nama Supplier</label>
+    <input type="text" id="supplier" placeholder="Contoh : Sunchang">
+  </div>
+
+  <div class="form-group">
+    <label>Jenis Barang</label>
+    <input type="text" id="jenisBarang" placeholder="Contoh : Kardus / Kaos">
+  </div>
+
+  <div class="form-group">
+    <label>PCS per Bundle</label>
+    <input type="number" id="pcsPerBundle" placeholder="Contoh : 12">
+  </div>
+
+  <div class="form-group">
+    <label>Raw Material (Bundle)</label>
+    <input type="number" id="rawBundle" placeholder="Jumlah Bundle">
+  </div>
+
+  <div class="form-group">
+    <label>Barang Oke (Bundle)</label>
+    <input type="number" id="okeBundle" placeholder="Jumlah Bundle OK">
+  </div>
+
+  <div class="form-group">
+    <label>Barang NG (PCS)</label>
+    <input type="number" id="barangNG" placeholder="Jumlah PCS NG">
+  </div>
+
+  <button class="btn-tambah" onclick="tambahData()">
+    Tambah Data
+  </button>
+
+  <button class="btn-export" onclick="exportExcel()">
+    Export Excel
+  </button>
+
+  <table id="tableQC">
+
+    <thead>
+
+      <tr>
+        <th>No</th>
+        <th>Tanggal</th>
+        <th>Supplier</th>
+        <th>Jenis Barang</th>
+        <th>PCS / Bundle</th>
+        <th>Raw Bundle</th>
+        <th>Raw PCS</th>
+        <th>OK Bundle</th>
+        <th>OK PCS</th>
+        <th>NG PCS</th>
+        <th>Total Produksi</th>
+        <th>Sisa Material</th>
+        <th>% OK</th>
+        <th>% NG</th>
+      </tr>
+
+    </thead>
+
+    <tbody>
+
+    </tbody>
+
+  </table>
+
+</div>
+
+<script>
+
+let no = 1;
+
+function tambahData(){
+
+  // AMBIL DATA INPUT
+  let tanggal = document.getElementById("tanggal").value;
+
+  let supplier = document.getElementById("supplier").value;
+
+  let jenisBarang = document.getElementById("jenisBarang").value;
+
+  let pcsPerBundle = parseInt(document.getElementById("pcsPerBundle").value) || 0;
+
+  let rawBundle = parseInt(document.getElementById("rawBundle").value) || 0;
+
+  let okeBundle = parseInt(document.getElementById("okeBundle").value) || 0;
+
+  let barangNG = parseInt(document.getElementById("barangNG").value) || 0;
+
+  // PERHITUNGAN
+  let rawPCS = rawBundle * pcsPerBundle;
+
+  let okePCS = okeBundle * pcsPerBundle;
+
+  let totalProduksi = okePCS + barangNG;
+
+  let sisaMaterial = rawPCS - totalProduksi;
+
+  // PERSENTASE
+  let persenOK = 0;
+
+  let persenNG = 0;
+
+  if(totalProduksi > 0){
+
+    persenOK = (okePCS / totalProduksi) * 100;
+
+    persenNG = (barangNG / totalProduksi) * 100;
+  }
+
+  // MASUKKAN KE TABEL
+  let table = document.getElementById("tableQC")
+              .getElementsByTagName("tbody")[0];
+
+  let row = table.insertRow();
+
+  row.insertCell(0).innerHTML = no++;
+
+  row.insertCell(1).innerHTML = tanggal;
+
+  row.insertCell(2).innerHTML = supplier;
+
+  row.insertCell(3).innerHTML = jenisBarang;
+
+  row.insertCell(4).innerHTML = pcsPerBundle;
+
+  row.insertCell(5).innerHTML = rawBundle;
+
+  row.insertCell(6).innerHTML = rawPCS;
+
+  row.insertCell(7).innerHTML = okeBundle;
+
+  row.insertCell(8).innerHTML = okePCS;
+
+  row.insertCell(9).innerHTML = barangNG;
+
+  row.insertCell(10).innerHTML = totalProduksi;
+
+  row.insertCell(11).innerHTML = sisaMaterial;
+
+  row.insertCell(12).innerHTML = persenOK.toFixed(2) + "%";
+
+  row.insertCell(13).innerHTML = persenNG.toFixed(2) + "%";
+
+  // RESET INPUT
+  document.getElementById("tanggal").value = "";
+
+  document.getElementById("supplier").value = "";
+
+  document.getElementById("jenisBarang").value = "";
+
+  document.getElementById("pcsPerBundle").value = "";
+
+  document.getElementById("rawBundle").value = "";
+
+  document.getElementById("okeBundle").value = "";
+
+  document.getElementById("barangNG").value = "";
+}
+
+function exportExcel(){
+
+  let table = document.getElementById("tableQC");
+
+  let html = table.outerHTML;
+
+  let url = 'data:application/vnd.ms-excel,' + encodeURIComponent(html);
+
+  let downloadLink = document.createElement("a");
+
+  downloadLink.href = url;
+
+  downloadLink.download = 'Data_QC_Supplier.xls';
+
+  document.body.appendChild(downloadLink);
+
+  downloadLink.click();
+
+  document.body.removeChild(downloadLink);
+}
+
+</script>
+
+</body>
+  </html>
